@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { compose, withProps } from "recompose"
+import { compose, withProps, lifecycle } from "recompose"
 
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-google-maps"
 import InfoBox from "react-google-maps/lib/components/addons/InfoBox"
@@ -13,25 +13,25 @@ const MainMap = compose(
   }),
   withScriptjs,
   withGoogleMap,
-  // lifecycle({
-  //   componentDidMount() {
-  //     const DirectionsService = new google.maps.DirectionsService();
-  
-  //     DirectionsService.route({
-  //       origin: new google.maps.LatLng(41.8507300, -87.6512600),
-  //       destination: new google.maps.LatLng(41.8525800, -87.6514100),
-  //       travelMode: google.maps.TravelMode.DRIVING,
-  //     }, (result, status) => {
-  //       if (status === google.maps.DirectionsStatus.OK) {
-  //         this.setState({
-  //           directions: result,
-  //         });
-  //       } else {
-  //         console.error(`error fetching directions ${result}`);
-  //       }
-  //     });
-  //   }
-  // })
+  lifecycle({
+    componentDidMount() {
+      const DirectionsService = new google.maps.DirectionsService();
+
+      DirectionsService.route({
+        origin: new google.maps.LatLng(41.8507300, -87.6512600),
+        destination: new google.maps.LatLng(41.8525800, -87.6514100),
+        travelMode: google.maps.TravelMode.DRIVING,
+      }, (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          this.setState({
+            directions: result,
+          });
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      });
+    }
+  })
 
 )((props) =>
 
@@ -57,7 +57,7 @@ const MainMap = compose(
     </Marker>
     {/* MARKER CON INFO */}
 
-    <DirectionsRenderer directions="puerta de atocha" />
+    {props.directions ? <DirectionsRenderer directions={props.directions} /> : "<></>"}
 
   </GoogleMap>
 )
