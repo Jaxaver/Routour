@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import Service from './service/Auth.service'
+import { GoogleMap, LoadScript } from '@react-google-maps/api'
 
 /* CUSTOM COASTER COMPONENTS */
 /* CUSTOM UI COMPONENTS */
@@ -98,7 +99,8 @@ class App extends Component {
                 {/* <MainMap loggedInUser={this.state.loggedInUser} containerElement={<div style={{ height: `400px` }} />}
                   mapElement={<div style={{ height: `100%` }} />} /> */}
                 {/* <MyFancyComponent loggedInUser={this.state.loggedInUser} /> */}
-                <MainMap />
+                
+                  <MainMap />
               </>
               :
               <Redirect to="/" />

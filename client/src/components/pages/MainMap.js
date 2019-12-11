@@ -1,67 +1,274 @@
 import React, { Component } from 'react'
-import { compose, withProps, lifecycle } from "recompose"
+import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api'
+// const ScriptLoaded = require("../../docs/ScriptLoaded").default;
 
-import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-google-maps"
-import InfoBox from "react-google-maps/lib/components/addons/InfoBox"
 
-const MainMap = compose(
-  withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g&v=3.exp&libraries=geometry,drawing,places",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `80%`, width: `80%` }} />, // ESTILOS DE MAPA
-  }),
-  withScriptjs,
-  withGoogleMap,
-  lifecycle({
-    componentDidMount() {
-      const DirectionsService = new google.maps.DirectionsService();
+class MainMap extends Component {
+  constructor(props) {
+    super(props)
 
-      DirectionsService.route({
-        origin: new google.maps.LatLng(41.8507300, -87.6512600),
-        destination: new google.maps.LatLng(41.8525800, -87.6514100),
-        travelMode: google.maps.TravelMode.DRIVING,
-      }, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
-          this.setState({
-            directions: result,
-          });
-        } else {
-          console.error(`error fetching directions ${result}`);
-        }
-      });
+    this.state = {
+      response: null,
+      travelMode: 'DRIVING',
+      origin: 'calle ibiza',
+      destination: 'calle alcalá'
     }
-  })
 
-)((props) =>
+    this.directionsCallback = this.directionsCallback.bind(this)
+    this.checkDriving = this.checkDriving.bind(this)
+    this.checkBicycling = this.checkBicycling.bind(this)
+    this.checkTransit = this.checkTransit.bind(this)
+    this.checkWalking = this.checkWalking.bind(this)
+    this.getOrigin = this.getOrigin.bind(this)
+    this.getDestination = this.getDestination.bind(this)
+    this.onClick = this.onClick.bind(this)
+    this.onMapClick = this.onMapClick.bind(this)
+  }
 
-  <GoogleMap
-    defaultZoom={8}
-    defaultCenter={{ lat: 41.85073, lng: -87.65126 }}
-  >
-    {/* <Marker position={{ lat: -34.397, lng: 150.644 }} /> 
-    MARKER A PELO */}
+  directionsCallback(response) {
+    console.log(response)
+
+    if (response !== null) {
+      if (response.status === 'OK') {
+        this.setState(
+          () => ({
+            response,
+            origin: "",
+            destination: ""
+          })
+        )
+      } else {
+        console.log('response: ', response)
+      }
+    }
+  }
+
+  checkDriving({ target: { checked } }) {
+    checked &&
+      this.setState(
+        () => ({
+          travelMode: 'DRIVING'
+        })
+      )
+  }
+
+  checkBicycling({ target: { checked } }) {
+    checked &&
+      this.setState(
+        () => ({
+          travelMode: 'BICYCLING'
+        })
+      )
+  }
+
+  checkTransit({ target: { checked } }) {
+    checked &&
+      this.setState(
+        () => ({
+          travelMode: 'TRANSIT'
+        })
+      )
+  }
+
+  checkWalking({ target: { checked } }) {
+    checked &&
+      this.setState(
+        () => ({
+          travelMode: 'WALKING'
+        })
+      )
+  }
+
+  getOrigin(ref) {
+    this.origin = ref
+  }
+
+  getDestination(ref) {
+    this.destination = ref
+  }
+
+  onClick() {
+    if (this.origin.value !== '' && this.destination.value !== '') {
+      this.setState(
+        () => ({
+          origin: this.origin.value,
+          destination: this.destination.value
+        })
+      )
+    }
+  }
+
+  onMapClick(...args) {
+    console.log('onClick args: ', args)
+  }
 
 
-    <Marker
-      position={{ lat: 22.627, lng: 120.301 }}>
-      <InfoBox
-        options={{ closeBoxURL: ``, enableEventPropagation: true }}
-      >
-        <div style={{ backgroundColor: `yellow`, opacity: 0.75, padding: `12px` }}>
-          <div style={{ fontSize: `16px`, fontColor: `#08233B`, fontFamily: `helvetica` }}>
-            Hello, Kaohsiung!
+  render() {
+    return (
+      <>
+
+        <div className='map-settings'>
+          <hr className='mt-0 mb-3' />
+
+          <div className='row'>
+            <div className='col-md-6 col-lg-4'>
+              <div className='form-group'>
+                <label htmlFor='ORIGIN'>Origin</label>
+                <br />
+                <input id='ORIGIN' className='form-control' type='text' ref={this.getOrigin} />
+              </div>
+            </div>
+
+            <div className='col-md-6 col-lg-4'>
+              <div className='form-group'>
+                <label htmlFor='DESTINATION'>Destination</label>
+                <br />
+                <input id='DESTINATION' className='form-control' type='text' ref={this.getDestination} />
+              </div>
+            </div>
           </div>
+
+          <div className='d-flex flex-wrap'>
+            <div className='form-group custom-control custom-radio mr-4'>
+              <input
+                id='DRIVING'
+                className='custom-control-input'
+                name='travelMode'
+                type='radio'
+                checked={this.state.travelMode === 'DRIVING'}
+                onChange={this.checkDriving}
+              />
+              <label className='custom-control-label' htmlFor='DRIVING'>Driving</label>
+            </div>
+
+            <div className='form-group custom-control custom-radio mr-4'>
+              <input
+                id='BICYCLING'
+                className='custom-control-input'
+                name='travelMode'
+                type='radio'
+                checked={this.state.travelMode === 'BICYCLING'}
+                onChange={this.checkBicycling}
+              />
+              <label className='custom-control-label' htmlFor='BICYCLING'>Bicycling</label>
+            </div>
+
+            <div className='form-group custom-control custom-radio mr-4'>
+              <input
+                id='TRANSIT'
+                className='custom-control-input'
+                name='travelMode'
+                type='radio'
+                checked={this.state.travelMode === 'TRANSIT'}
+                onChange={this.checkTransit}
+              />
+              <label className='custom-control-label' htmlFor='TRANSIT'>Transit</label>
+            </div>
+
+            <div className='form-group custom-control custom-radio mr-4'>
+              <input
+                id='WALKING'
+                className='custom-control-input'
+                name='travelMode'
+                type='radio'
+                checked={this.state.travelMode === 'WALKING'}
+                onChange={this.checkWalking}
+              />
+              <label className='custom-control-label' htmlFor='WALKING'>Walking</label>
+            </div>
+          </div>
+
+          <button className='btn btn-primary' type='button' onClick={this.onClick}>
+            Build Route
+          </button>
         </div>
-      </InfoBox>
-    </Marker>
-    {/* MARKER CON INFO */}
 
-    {props.directions ? <DirectionsRenderer directions={props.directions} /> : "<></>"}
+        <LoadScript id="script-loader"
+          googleMapsApiKey="AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g">
+          <GoogleMap
+            id='example-map'
+            mapContainerStyle={{
+              height: "400px",
+              width: "800px"
+            }}
+            zoom={7}
+            center={{
+              lat: -3.745,
+              lng: -38.523
+            }}
+          >
+            {
+              (
+                this.state.destination !== '' &&
+                this.state.origin !== ''
+              ) && (
+                <DirectionsService
+                  // required
+                  options={{
 
-  </GoogleMap>
-)
+                    destination: this.state.destination,
+                    origin: this.state.origin,
+                    travelMode: this.state.travelMode
+                  }}
+                  // required
+                  callback={this.directionsCallback}
+                  // optional
+                  onLoad={directionsService => {
+                    console.log('DirectionsService onLoad directionsService: ', directionsService)
+                  }}
+                  // optional
+                  onUnmount={directionsService => {
+                    console.log('DirectionsService onUnmount directionsService: ', directionsService)
+                  }}
+                />
+              )
+            }
 
+            {
+              this.state.response !== null && (
+
+                <>
+                <DirectionsRenderer
+                  // required
+                  options={{
+                    directions: this.state.response
+                  }}
+                  // optional
+                  onLoad={directionsRenderer => {
+                    console.log('DirectionsRenderer onLoad directionsRenderer: ', directionsRenderer)
+                  }}
+                  // optional
+                  onUnmount={directionsRenderer => {
+                    console.log('DirectionsRenderer onUnmount directionsRenderer: ', directionsRenderer)
+                  }}
+                />
+                <DirectionsRenderer
+                  // required
+                  options={{
+                    directions: this.state.response
+                  }}
+                  // optional
+                  onLoad={directionsRenderer => {
+                    console.log("Fuera los pájaros. Las ratas del aire.")
+                  }}
+                  // optional
+                  onUnmount={directionsRenderer => {
+                    console.log('DirectionsRenderer onUnmount directionsRenderer: ', directionsRenderer)
+                  }}
+                />
+                </>
+              )
+            }
+
+
+          </GoogleMap>
+        </LoadScript>
+
+      </>
+
+    )
+  }
+}
 
 
 
