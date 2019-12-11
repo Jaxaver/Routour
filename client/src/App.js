@@ -10,12 +10,14 @@ import Navbar from './components/ui/Navbar'
 /* CUSTOM PAGE COMPONENTS */
 import Index from './components/pages/Index'
 import Profile from './components/pages/Profile'
+import MainMap, { MyFancyComponent } from './components/pages/MainMap'
+
 
 // import Profile from './components/pages/Profile'
 
 
 /* CUSTOM AUTH COMPONENTS */
-import {Container, Row, Button, Modal} from  "react-bootstrap"
+import { Container, Row, Button, Modal } from "react-bootstrap"
 
 
 
@@ -28,9 +30,34 @@ class App extends Component {
 
   constructor() {
     super()
-    this.state = { loggedInUser: null }
+    this.state = {
+      loggedInUser: null,
+      // isMarkerShown: false,
+    }
     this._service = new Service()
   }
+
+  // componentDidMount() {
+  //   this.delayedShowMarker()
+  // }
+
+  // delayedShowMarker = () => {
+  //   setTimeout(() => {
+  //     this.setState({ isMarkerShown: true })
+  //   }, 3000)
+  // }
+
+  // handleMarkerClick = () => {
+  //   this.setState({ isMarkerShown: false })
+  //   this.delayedShowMarker()
+  // }
+
+
+
+
+
+
+
 
   setTheUser = user => {
     this.setState({ loggedInUser: user })
@@ -58,13 +85,25 @@ class App extends Component {
         <Navbar loggedInUser={this.state.loggedInUser} setUser={this.setTheUser} />
 
         <Switch>
-          
+
           <Route exact path="/" component={Index} />
           <Route path="/signup" render={match => <Signup setUser={this.setTheUser} {...match} />} />
           <Route path="/login" render={match => <Login setUser={this.setTheUser} {...match} />} />
           <Route path="/profile" render={() =>
             this.state.loggedInUser ? <Profile loggedInUser={this.state.loggedInUser} /> : <Redirect to="/" />
           } />
+          <Route path="/map" render={() =>
+            this.state.loggedInUser ?
+              <>
+                {/* <MainMap loggedInUser={this.state.loggedInUser} containerElement={<div style={{ height: `400px` }} />}
+                  mapElement={<div style={{ height: `100%` }} />} /> */}
+                {/* <MyFancyComponent loggedInUser={this.state.loggedInUser} /> */}
+                <MainMap />
+              </>
+              :
+              <Redirect to="/" />
+          } />
+
         </Switch>
 
       </>

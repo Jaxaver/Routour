@@ -35,7 +35,7 @@ class Navigation extends Component {
                         <Nav className="mr-auto">
                             <Nav.Link as="li"><Link to="/">Inicio</Link></Nav.Link>
                             <Nav.Link as="li"><Link to="/profile">Mi perfil</Link></Nav.Link>
-                            {/* <Nav.Link as="li"><Link to="/coasters">Montañas rusas</Link></Nav.Link> */}
+                            <Nav.Link as="li"><Link to="/map">Mapa</Link></Nav.Link>
                             <Nav.Link as="li" onClick={this.logoutUser}>Logout</Nav.Link>
                         </Nav>
                         <Nav className="ml-auto">
