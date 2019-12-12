@@ -9,9 +9,9 @@ class MainMap extends Component {
 
     this.state = {
       response: null,
-      travelMode: 'DRIVING',
-      origin: 'calle ibiza',
-      destination: 'calle alcalá'
+      travelMode: 'WALKING',
+      origin: '',
+      destination: ''
     }
 
     this.directionsCallback = this.directionsCallback.bind(this)
@@ -202,21 +202,18 @@ class MainMap extends Component {
                 this.state.destination !== '' &&
                 this.state.origin !== ''
               ) && (
-                <DirectionsService
-                  // required
-                  options={{
-
-                    destination: this.state.destination,
+                <DirectionsService //REQUERIDO
+                  options={{ //REQUERIDO
+                    waypoints: [{ location: "el pirulí, madrid", stopover: true }, { location: "estatua del angel caido, madrid", stopover: false }],
+                    destination: this.state.origin,
                     origin: this.state.origin,
-                    travelMode: this.state.travelMode
+                    travelMode: this.state.travelMode,
                   }}
-                  // required
+
                   callback={this.directionsCallback}
-                  // optional
                   onLoad={directionsService => {
                     console.log('DirectionsService onLoad directionsService: ', directionsService)
                   }}
-                  // optional
                   onUnmount={directionsService => {
                     console.log('DirectionsService onUnmount directionsService: ', directionsService)
                   }}
@@ -227,36 +224,20 @@ class MainMap extends Component {
             {
               this.state.response !== null && (
 
-                <>
-                <DirectionsRenderer
-                  // required
+
+                <DirectionsRenderer //REQUERIDO
                   options={{
-                    directions: this.state.response
+                    directions: this.state.response //REQUERIDO
                   }}
-                  // optional
                   onLoad={directionsRenderer => {
                     console.log('DirectionsRenderer onLoad directionsRenderer: ', directionsRenderer)
                   }}
-                  // optional
                   onUnmount={directionsRenderer => {
                     console.log('DirectionsRenderer onUnmount directionsRenderer: ', directionsRenderer)
                   }}
                 />
-                <DirectionsRenderer
-                  // required
-                  options={{
-                    directions: this.state.response
-                  }}
-                  // optional
-                  onLoad={directionsRenderer => {
-                    console.log("Fuera los pájaros. Las ratas del aire.")
-                  }}
-                  // optional
-                  onUnmount={directionsRenderer => {
-                    console.log('DirectionsRenderer onUnmount directionsRenderer: ', directionsRenderer)
-                  }}
-                />
-                </>
+
+
               )
             }
 

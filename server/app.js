@@ -20,8 +20,7 @@ require('./configs/view-engine.config')(app)
 
 
 
-// default value for title local
-app.locals.title = 'ROUTOUR';
+app.locals.title = 'Routour';
 
 
 // Hojas de rutas
