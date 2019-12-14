@@ -1,32 +1,33 @@
 import axios from 'axios'
 
-export default class CalculateRoutes{
+export default class MapServices {
 
     constructor() {
         
+
     }
 
 
 
-    getWayPoints(origin, radius, types, keyword = "touristic", apiKey){
-        axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {
+    getWaypoints(origin="calle_alcala", radius="500", types = "point_of_interest,tourist_attraction", keyword = "touristic") {
+        return axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json?', {
             params: {
                 location: `${origin}`,
                 radius: `${radius}`,
                 type: `${types}`,
                 keyword: `${keyword}`,
-                key: `${apiKey}`                
+                key: `AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g`
             }
-    })
+        })
 
     }
-    
+
     calculateRoute() {
 
     }
 }
 
-// const service = new CalculateRoutes()
+// const service = new MapServices()
 
 // service.getWayPoints("adas", "asdasd")
 

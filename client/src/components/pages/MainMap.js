@@ -1,28 +1,30 @@
 import React, { Component } from 'react'
 import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api'
+import MapServices from '../../service/MapServices.service'
 // const ScriptLoaded = require("../../docs/ScriptLoaded").default;
+
 
 
 class MainMap extends Component {
   constructor(props) {
     super(props)
+    this._service = new MapServices()
 
     this.state = {
       response: null,
       travelMode: 'WALKING',
-      origin: '',
-      destination: ''
+      origin: 'calle alcala',
+      destination: 'calle alcántara',
+      radius: 0,
+      type: "",
+      keyword: ""
     }
 
     this.directionsCallback = this.directionsCallback.bind(this)
-    this.checkDriving = this.checkDriving.bind(this)
-    this.checkBicycling = this.checkBicycling.bind(this)
-    this.checkTransit = this.checkTransit.bind(this)
-    this.checkWalking = this.checkWalking.bind(this)
     this.getOrigin = this.getOrigin.bind(this)
     this.getDestination = this.getDestination.bind(this)
-    this.onClick = this.onClick.bind(this)
     this.onMapClick = this.onMapClick.bind(this)
+    this.getWaypoints = this._service.getWaypoints.bind(this)
   }
 
   directionsCallback(response) {
@@ -34,7 +36,11 @@ class MainMap extends Component {
           () => ({
             response,
             origin: "",
-            destination: ""
+            destination: "",
+
+            radius: 0,
+            type: "",
+            // keyword: ""
           })
         )
       } else {
@@ -43,41 +49,25 @@ class MainMap extends Component {
     }
   }
 
-  checkDriving({ target: { checked } }) {
-    checked &&
-      this.setState(
-        () => ({
-          travelMode: 'DRIVING'
-        })
-      )
+  // CHECKS DE RADIUS
+  checkRadius(e) {
+    const prueba = e.target.value
+    console.log("soy el console", prueba)
+
+    this.setState({ radius: prueba })
+  }
+  // CHECKS DE RADIUS fin
+  onHandleChange = e => {
+    let { name, value } = e.target
+    this.setState(
+      () => ({
+        [name]: value,
+      })
+    )
+
   }
 
-  checkBicycling({ target: { checked } }) {
-    checked &&
-      this.setState(
-        () => ({
-          travelMode: 'BICYCLING'
-        })
-      )
-  }
 
-  checkTransit({ target: { checked } }) {
-    checked &&
-      this.setState(
-        () => ({
-          travelMode: 'TRANSIT'
-        })
-      )
-  }
-
-  checkWalking({ target: { checked } }) {
-    checked &&
-      this.setState(
-        () => ({
-          travelMode: 'WALKING'
-        })
-      )
-  }
 
   getOrigin(ref) {
     this.origin = ref
@@ -87,15 +77,19 @@ class MainMap extends Component {
     this.destination = ref
   }
 
-  onClick() {
-    if (this.origin.value !== '' && this.destination.value !== '') {
-      this.setState(
-        () => ({
-          origin: this.origin.value,
-          destination: this.destination.value
-        })
-      )
-    }
+
+  // this.setState({
+  //   coaster: { ...this.state.coaster, [name]: value }
+  // })
+
+
+  onSubmitHandler() {
+
+    this.getWaypoints(this.state.origin, this.state.radius, this.state.types, "touristic")
+      .then(response => {
+
+        console.log(response)
+      }) //aquí van parámetros de búsqueda
   }
 
   onMapClick(...args) {
@@ -106,82 +100,67 @@ class MainMap extends Component {
   render() {
     return (
       <>
+        <form>
+          <div className='map-settings'>
+            <hr className='mt-0 mb-3' />
 
-        <div className='map-settings'>
-          <hr className='mt-0 mb-3' />
+            <div className='row'>
 
-          <div className='row'>
-            <div className='col-md-6 col-lg-4'>
-              <div className='form-group'>
-                <label htmlFor='ORIGIN'>Origin</label>
-                <br />
-                <input id='ORIGIN' className='form-control' type='text' ref={this.getOrigin} />
+              <div className='col-md-6 col-lg-4'>
+                <div className='form-group'>
+                  <label htmlFor='ORIGIN'>Address</label>
+                  <br />
+                  <input id='ORIGIN' name="origin" className='form-control' type='text' onChange={(e) => this.onHandleChange(e)} ref={this.getOrigin} />
+                </div>
+              </div>
+
+              <div className='col-md-6 col-lg-4'>
+                <div className='form-group'>
+                  <label htmlFor='DESTINATION'>Destination</label>
+                  <br />
+                  <input id='DESTINATION' name="destination" className='form-control' onChange={(e) => this.onHandleChange(e)} type='text' ref={this.getDestination} />
+                </div>
               </div>
             </div>
 
-            <div className='col-md-6 col-lg-4'>
-              <div className='form-group'>
-                <label htmlFor='DESTINATION'>Destination</label>
-                <br />
-                <input id='DESTINATION' className='form-control' type='text' ref={this.getDestination} />
+
+            {/* RADIUS FORMULARY */}
+            <div className='d-flex flex-wrap'>
+              <div className='form-group custom-control custom-radio mr-4'>
+                <input
+                  id='LESSTHANANHOUR'
+                  className='custom-control-input'
+                  name='radius'
+                  type='radio'
+                  value={500}
+                  onChange={(e) => this.checkRadius(e)} ///handlechange?
+                />
+                <label className='custom-control-label' htmlFor='LESSTHANANHOUR'>Have a quick walk</label>
+              </div>
+
+              <div className='form-group custom-control custom-radio mr-4'>
+                <input
+                  id='MORETHANANHOUR'
+                  className='custom-control-input'
+                  name='radius'
+                  value={2000}
+                  type='radio'
+                  onChange={(e) => this.checkRadius(e)}
+                />
+                <label className='custom-control-label' htmlFor='MORETHANANHOUR'>I'm in no rush</label>
               </div>
             </div>
-          </div>
+            {/* RADIUS FORMULARY END */}
 
-          <div className='d-flex flex-wrap'>
-            <div className='form-group custom-control custom-radio mr-4'>
-              <input
-                id='DRIVING'
-                className='custom-control-input'
-                name='travelMode'
-                type='radio'
-                checked={this.state.travelMode === 'DRIVING'}
-                onChange={this.checkDriving}
-              />
-              <label className='custom-control-label' htmlFor='DRIVING'>Driving</label>
-            </div>
 
-            <div className='form-group custom-control custom-radio mr-4'>
-              <input
-                id='BICYCLING'
-                className='custom-control-input'
-                name='travelMode'
-                type='radio'
-                checked={this.state.travelMode === 'BICYCLING'}
-                onChange={this.checkBicycling}
-              />
-              <label className='custom-control-label' htmlFor='BICYCLING'>Bicycling</label>
-            </div>
 
-            <div className='form-group custom-control custom-radio mr-4'>
-              <input
-                id='TRANSIT'
-                className='custom-control-input'
-                name='travelMode'
-                type='radio'
-                checked={this.state.travelMode === 'TRANSIT'}
-                onChange={this.checkTransit}
-              />
-              <label className='custom-control-label' htmlFor='TRANSIT'>Transit</label>
-            </div>
 
-            <div className='form-group custom-control custom-radio mr-4'>
-              <input
-                id='WALKING'
-                className='custom-control-input'
-                name='travelMode'
-                type='radio'
-                checked={this.state.travelMode === 'WALKING'}
-                onChange={this.checkWalking}
-              />
-              <label className='custom-control-label' htmlFor='WALKING'>Walking</label>
-            </div>
-          </div>
 
-          <button className='btn btn-primary' type='button' onClick={this.onClick}>
-            Build Route
+            <button onClick={() => this.onSubmitHandler()} className='btn btn-primary' type='button' >
+              Recommend Route
           </button>
-        </div>
+          </div>
+        </form>
 
         <LoadScript id="script-loader"
           googleMapsApiKey="AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g">
@@ -205,9 +184,13 @@ class MainMap extends Component {
                 <DirectionsService //REQUERIDO
                   options={{ //REQUERIDO
                     waypoints: [{ location: "el pirulí, madrid", stopover: true }, { location: "estatua del angel caido, madrid", stopover: false }],
-                    destination: this.state.origin,
+                    destination: this.state.destination,
                     origin: this.state.origin,
-                    travelMode: this.state.travelMode,
+                    travelMode: "WALKING",
+
+                    radius: this.state.radius,
+                    type: this.state.type,
+                    keyword: this.state.keyword
                   }}
 
                   callback={this.directionsCallback}

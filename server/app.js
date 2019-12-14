@@ -24,8 +24,8 @@ app.locals.title = 'Routour';
 
 
 // Hojas de rutas
-const index = require('./routes/index');
-app.use('/', index);
+// const index = require('./routes/index');
+// app.use('/', index);
 
 const auth = require('./routes/auth.routes');
 app.use('/api/auth', auth);

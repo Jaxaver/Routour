@@ -1,3 +1,67 @@
+
+https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location=calle+alcala&radius=2000&type=&keyword=touristic&key=AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g
+https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=40.413864,-3.696601&radius=300&type=point_of_interest,tourist_attraction&keyword=touristic&key=AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g
+
+
+
+<div className='d-flex flex-wrap'>
+              <div className='form-group custom-control custom-radio mr-4'>
+                <input
+                  id='DRIVING'
+                  className='custom-control-input'
+                  name='travelMode'
+                  type='radio'
+                  checked={this.state.travelMode === 'DRIVING'}
+                  onChange={this.checkDriving}
+                />
+                <label className='custom-control-label' htmlFor='DRIVING'>Driving</label>
+              </div>
+
+              <div className='form-group custom-control custom-radio mr-4'>
+                <input
+                  id='BICYCLING'
+                  className='custom-control-input'
+                  name='travelMode'
+                  type='radio'
+                  checked={this.state.travelMode === 'BICYCLING'}
+                  onChange={this.checkBicycling}
+                />
+                <label className='custom-control-label' htmlFor='BICYCLING'>Bicycling</label>
+              </div>
+
+              <div className='form-group custom-control custom-radio mr-4'>
+                <input
+                  id='TRANSIT'
+                  className='custom-control-input'
+                  name='travelMode'
+                  type='radio'
+                  checked={this.state.travelMode === 'TRANSIT'}
+                  onChange={this.checkTransit}
+                />
+                <label className='custom-control-label' htmlFor='TRANSIT'>Transit</label>
+              </div>
+
+              <div className='form-group custom-control custom-radio mr-4'>
+                <input
+                  id='WALKING'
+                  className='custom-control-input'
+                  name='travelMode'
+                  type='radio'
+                  checked={this.state.travelMode === 'WALKING'}
+                  onChange={this.checkWalking}
+                />
+                <label className='custom-control-label' htmlFor='WALKING'>Walking</label>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
 // import React, { Component } from 'react'
 // import { compose, withProps, lifecycle } from "recompose"
 
@@ -45,15 +109,15 @@
 
 //     <Marker
 //       position={{ lat: 22.627, lng: 120.301 }}>
-//       <InfoBox
-//         options={{ closeBoxURL: ``, enableEventPropagation: true }}
-//       >
-//         <div style={{ backgroundColor: `yellow`, opacity: 0.75, padding: `12px` }}>
-//           <div style={{ fontSize: `16px`, fontColor: `#08233B`, fontFamily: `helvetica` }}>
-//             Hello, Kaohsiung!
-//           </div>
-//         </div>
-//       </InfoBox>
+      // <InfoBox
+      //   options={{ closeBoxURL: ``, enableEventPropagation: true }}
+      // >
+      //   <div style={{ backgroundColor: `yellow`, opacity: 0.75, padding: `12px` }}>
+      //     <div style={{ fontSize: `16px`, fontColor: `#08233B`, fontFamily: `helvetica` }}>
+      //       Hello, Kaohsiung!
+      //     </div>
+      //   </div>
+      // </InfoBox>
 //     </Marker>
 //     {/* MARKER CON INFO */}
 

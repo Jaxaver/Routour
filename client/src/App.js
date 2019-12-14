@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
-import Service from './service/Auth.service'
+import AuthServices from './service/Auth.service'
 import { GoogleMap, LoadScript } from '@react-google-maps/api'
 
 /* CUSTOM COASTER COMPONENTS */
@@ -27,6 +27,8 @@ import Login from './components/auth/Login'
 
 
 
+
+
 class App extends Component {
 
   constructor() {
@@ -35,7 +37,7 @@ class App extends Component {
       loggedInUser: null,
       // isMarkerShown: false,
     }
-    this._service = new Service()
+    this._service = new AuthServices()
   }
 
   // componentDidMount() {
@@ -94,16 +96,7 @@ class App extends Component {
             this.state.loggedInUser ? <Profile loggedInUser={this.state.loggedInUser} /> : <Redirect to="/" />
           } />
           <Route path="/map" render={() =>
-            this.state.loggedInUser ?
-              <>
-                {/* <MainMap loggedInUser={this.state.loggedInUser} containerElement={<div style={{ height: `400px` }} />}
-                  mapElement={<div style={{ height: `100%` }} />} /> */}
-                {/* <MyFancyComponent loggedInUser={this.state.loggedInUser} /> */}
-                
-                  <MainMap />
-              </>
-              :
-              <Redirect to="/" />
+            this.state.loggedInUser ? <MainMap /> : <Redirect to="/" />
           } />
 
         </Switch>
