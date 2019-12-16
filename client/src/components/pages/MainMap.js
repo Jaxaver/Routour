@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api'
 import MapServices from '../../service/MapServices.service'
+import mapStyles from "../../mapStyles"
 // const ScriptLoaded = require("../../docs/ScriptLoaded").default;
 
 
@@ -13,18 +14,21 @@ class MainMap extends Component {
     this.state = {
       response: null,
       travelMode: 'WALKING',
-      origin: 'calle alcala',
-      destination: 'calle alcántara',
+      origin: '',
+      originLatLng: {},
+      destination: '',
       radius: 0,
       type: "",
-      keyword: ""
+      keyword: "",
+      waypoints: []
     }
 
     this.directionsCallback = this.directionsCallback.bind(this)
     this.getOrigin = this.getOrigin.bind(this)
-    this.getDestination = this.getDestination.bind(this)
+    // this.getDestination = this.getDestination.bind(this)
     this.onMapClick = this.onMapClick.bind(this)
     this.getWaypoints = this._service.getWaypoints.bind(this)
+    this.getLocation = this._service.getLocation.bind(this)
   }
 
   directionsCallback(response) {
@@ -55,13 +59,15 @@ class MainMap extends Component {
     console.log("soy el console", prueba)
 
     this.setState({ radius: prueba })
+ 
   }
-  // CHECKS DE RADIUS fin
+
+
   onHandleChange = e => {
     let { name, value } = e.target
     this.setState(
       () => ({
-        [name]: value,
+        [name]: value,   
       })
     )
 
@@ -71,25 +77,26 @@ class MainMap extends Component {
 
   getOrigin(ref) {
     this.origin = ref
+    // this.destination = this.state.origin
   }
 
-  getDestination(ref) {
-    this.destination = ref
-  }
-
+ 
 
   // this.setState({
   //   coaster: { ...this.state.coaster, [name]: value }
   // })
 
 
-  onSubmitHandler() {
-
-    this.getWaypoints(this.state.origin, this.state.radius, this.state.types, "touristic")
+  onSubmitHandler() { //REQUEST API
+    
+    this.getLocation(this.state.origin)
+      .then(this.getWaypoints(this.state.originLatLng, this.state.radius, this.state.types = "tourist attraction", "touristic"))
       .then(response => {
 
-        console.log(response)
+   
+        console.log("respuesta del getWaypoints", response)
       }) //aquí van parámetros de búsqueda
+      .catch(console.log("catch"))
   }
 
   onMapClick(...args) {
@@ -114,13 +121,13 @@ class MainMap extends Component {
                 </div>
               </div>
 
-              <div className='col-md-6 col-lg-4'>
+              {/* <div className='col-md-6 col-lg-4'>
                 <div className='form-group'>
                   <label htmlFor='DESTINATION'>Destination</label>
                   <br />
                   <input id='DESTINATION' name="destination" className='form-control' onChange={(e) => this.onHandleChange(e)} type='text' ref={this.getDestination} />
                 </div>
-              </div>
+              </div> */}
             </div>
 
 
@@ -168,13 +175,17 @@ class MainMap extends Component {
             id='example-map'
             mapContainerStyle={{
               height: "400px",
-              width: "800px"
+              width: "800px",
+              
+
             }}
             zoom={7}
             center={{
               lat: -3.745,
               lng: -38.523
             }}
+            options= {{styles: mapStyles}}    // esta es la buena
+            
           >
             {
               (
