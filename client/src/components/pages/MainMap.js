@@ -32,19 +32,13 @@ class MainMap extends Component {
   }
 
   directionsCallback(response) {
-    console.log(response)
+    console.log("heyyyyyyyyyyyy", response)
 
     if (response !== null) {
       if (response.status === 'OK') {
         this.setState(
           () => ({
             response,
-            origin: "",
-            destination: "",
-
-            radius: 0,
-            type: "",
-            // keyword: ""
           })
         )
       } else {
@@ -57,22 +51,17 @@ class MainMap extends Component {
   checkRadius(e) {
     const prueba = e.target.value
     console.log("soy el console", prueba)
-
     this.setState({ radius: prueba })
- 
   }
-
 
   onHandleChange = e => {
     let { name, value } = e.target
     this.setState(
       () => ({
-        [name]: value,   
+        [name]: value,
       })
     )
-
   }
-
 
 
   getOrigin(ref) {
@@ -80,23 +69,15 @@ class MainMap extends Component {
     // this.destination = this.state.origin
   }
 
- 
-
-  // this.setState({
-  //   coaster: { ...this.state.coaster, [name]: value }
-  // })
-
 
   onSubmitHandler() { //REQUEST API
-    
-    this.getLocation(this.state.origin)
-      .then(this.getWaypoints(this.state.originLatLng, this.state.radius, this.state.types = "tourist attraction", "touristic"))
-      .then(response => {
 
-   
-        console.log("respuesta del getWaypoints", response)
-      }) //aquí van parámetros de búsqueda
-      .catch(console.log("catch"))
+    this.getLocation(this.state.origin)
+      .then(() => this.getWaypoints(this.state.originLatLng, this.state.radius))
+      .then(response => {
+        console.log(this.state, "response finla pero final de verdad")
+      })
+      .catch((err) => console.log("getWaypoints da error:", err))
   }
 
   onMapClick(...args) {
@@ -157,12 +138,6 @@ class MainMap extends Component {
                 <label className='custom-control-label' htmlFor='MORETHANANHOUR'>I'm in no rush</label>
               </div>
             </div>
-            {/* RADIUS FORMULARY END */}
-
-
-
-
-
             <button onClick={() => this.onSubmitHandler()} className='btn btn-primary' type='button' >
               Recommend Route
           </button>
@@ -176,7 +151,7 @@ class MainMap extends Component {
             mapContainerStyle={{
               height: "400px",
               width: "800px",
-              
+
 
             }}
             zoom={7}
@@ -184,24 +159,22 @@ class MainMap extends Component {
               lat: -3.745,
               lng: -38.523
             }}
-            options= {{styles: mapStyles}}    // esta es la buena
-            
+            options={{ styles: mapStyles }}    // esta es la buena
+
           >
             {
               (
-                this.state.destination !== '' &&
                 this.state.origin !== ''
               ) && (
                 <DirectionsService //REQUERIDO
                   options={{ //REQUERIDO
-                    waypoints: [{ location: "el pirulí, madrid", stopover: true }, { location: "estatua del angel caido, madrid", stopover: false }],
-                    destination: this.state.destination,
+                    waypoints: [{ location: this.state.waypoints[0], stopover: true }, { location: this.state.waypoints[1], stopover: true }, { location: this.state.waypoints[2], stopover: true }],
+                    destination: this.state.origin,
                     origin: this.state.origin,
                     travelMode: "WALKING",
-
-                    radius: this.state.radius,
-                    type: this.state.type,
-                    keyword: this.state.keyword
+                    // radius: this.state.radius,
+                    // type: this.state.type,
+                    // keyword: "touristic"
                   }}
 
                   callback={this.directionsCallback}
@@ -218,7 +191,6 @@ class MainMap extends Component {
             {
               this.state.response !== null && (
 
-
                 <DirectionsRenderer //REQUERIDO
                   options={{
                     directions: this.state.response //REQUERIDO
@@ -230,11 +202,8 @@ class MainMap extends Component {
                     console.log('DirectionsRenderer onUnmount directionsRenderer: ', directionsRenderer)
                   }}
                 />
-
-
               )
             }
-
 
           </GoogleMap>
         </LoadScript>
