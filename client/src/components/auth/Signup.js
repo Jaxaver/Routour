@@ -34,7 +34,6 @@ class SignupForm extends Component {
             <Container>
 
                 <h1>Registro</h1>
-
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Group>
                         <Form.Label>Usuario</Form.Label>

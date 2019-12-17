@@ -3,7 +3,7 @@ import { Container, Row } from 'react-bootstrap'
 
 const Index = () => {
 
-    return (
+    return ( 
         <Container>
             <section>
                 <h1>Lost in another city?</h1>

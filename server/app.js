@@ -30,5 +30,7 @@ app.locals.title = 'Routour';
 const auth = require('./routes/auth.routes');
 app.use('/api/auth', auth);
 
+app.use((req, res) => {     res.sendFile(__dirname + "/public/index.html");    })
+
 
 module.exports = app;
