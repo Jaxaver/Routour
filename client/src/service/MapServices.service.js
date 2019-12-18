@@ -1,11 +1,25 @@
 import axios from 'axios'
 import { DirectionsService } from '@react-google-maps/api';
 import MainMap from '../components/pages/MainMap';
+import mapStyles1 from "../styles/mapStyles1"
+import mapStyles2 from "../styles/mapStyles2"
+import mapStyles3 from "../styles/mapStyles3"
+import mapStyles4 from "../styles/mapStyles4"
 
 export default class MapServices {
 
     constructor() {
+        this._service = axios.create({
+            baseURL: 'http://localhost:3000/map',
+            withCredentials: true   // RUTAS PERSISTENTES
+        })
+    }
+    postExperience = experience => this._service.post('/new', experience)   //NO ESTOY TOTALMENTE SEGURO
 
+    checkRadius(e) {
+        const prueba = e.target.value
+        console.log("soy el console", prueba, e.target)
+        this.setState({ radius: prueba })
     }
 
     getLocation(originString) {
@@ -23,7 +37,7 @@ export default class MapServices {
         })
             .then(res => res.data.candidates[0].geometry.location)
             .then(res => this.setState({ originLatLng: `${res.lat},${res.lng}` }))
-            .then(res => console.log("aquí llevas las coordenadas", this.state.originLatLng))
+            .then(() => console.log("aquí llevas las coordenadas", this.state.originLatLng))
             .catch(err => console.log("getLocation error:", err))
 
     }
@@ -39,10 +53,13 @@ export default class MapServices {
                 key: `AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g`
             }
         })
-            .then(res => res.data.results.slice(0, 3))
+            .then(res => {
+                console.log(res, "primer then")
+                return res.data.results.slice(0, 3)
+            })
             .then(res => res.map(elem => elem.name))
             .then(nameArray => this.setState({ waypoints: nameArray }))
-            .then(()=> console.log("coords llegan a state", this.state))
+            .then(() => console.log("coords llegan a state", this.state))
             .catch(err => console.log(err))
         // .then(res => console.log("heeeeee-heeeee", res, this.state))
     }
@@ -53,19 +70,8 @@ export default class MapServices {
 
     }
 
-
-    calculateRoute() {
-
+    saveMap(mapState) {
+        axios.post("http://localhost:3000/map/new", mapState)
+        console.log("aquí, pasando info", mapState)
     }
 }
-
-// const service = new MapServices()
-
-// service.getWayPoints("adas", "asdasd")
-
-// ?location=40.413864,-3.696601&radius=300&type=point_of_interest,tourist_attraction&keyword=touristic&key
-
-
-// responseURL: "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location=%0840.4298197,-3.6736717&radius=500&type=point_of_interest,tourist_attraction&keyword=touristic&key=AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g"
-// responseURL: "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location=500&radius=%0840.4298197,-3.6736717&type=point_of_interest,tourist_attraction&keyword=touristic&key=AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g"
-// responseURL: "https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?&location=40.4298197,-3.6736717&radius=500&type=point_of_interest,tourist_attraction&keyword=touristic&key=AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g"

@@ -1,7 +1,15 @@
 import React, { Component } from 'react'
 import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api'
 import MapServices from '../../service/MapServices.service'
-import mapStyles from "../../mapStyles"
+import { DropdownButton, Dropdown, Nav, Button, Form, Container } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+
+
+import mapStyles1 from "../../styles/mapStyles1"
+import mapStyles2 from "../../styles/mapStyles2"
+import mapStyles3 from "../../styles/mapStyles3"
+import mapStyles4 from "../../styles/mapStyles4"
+
 // const ScriptLoaded = require("../../docs/ScriptLoaded").default;
 
 
@@ -10,7 +18,6 @@ class MainMap extends Component {
   constructor(props) {
     super(props)
     this._service = new MapServices()
-
     this.state = {
       response: null,
       travelMode: 'WALKING',
@@ -20,19 +27,23 @@ class MainMap extends Component {
       radius: 0,
       type: "",
       keyword: "",
-      waypoints: []
+      waypoints: [],
+      currentMapStyle: mapStyles1,
+      mapDrawn: false
     }
 
     this.directionsCallback = this.directionsCallback.bind(this)
-    this.getOrigin = this.getOrigin.bind(this)
-    // this.getDestination = this.getDestination.bind(this)
+    // this.getOrigin = this.getOrigin.bind(this)
     this.onMapClick = this.onMapClick.bind(this)
     this.getWaypoints = this._service.getWaypoints.bind(this)
     this.getLocation = this._service.getLocation.bind(this)
+    this.checkRadius = this._service.checkRadius.bind(this)
+    // this.checkMapStyle = this._service.checkMapStyle.bind(this)
+
   }
 
   directionsCallback(response) {
-    console.log("heyyyyyyyyyyyy", response)
+    console.log("directions callback", response)
 
     if (response !== null) {
       if (response.status === 'OK') {
@@ -42,16 +53,9 @@ class MainMap extends Component {
           })
         )
       } else {
-        console.log('response: ', response)
+        console.log('loloolololololololololo: ', response)
       }
     }
-  }
-
-  // CHECKS DE RADIUS
-  checkRadius(e) {
-    const prueba = e.target.value
-    console.log("soy el console", prueba)
-    this.setState({ radius: prueba })
   }
 
   onHandleChange = e => {
@@ -63,19 +67,18 @@ class MainMap extends Component {
     )
   }
 
-
-  getOrigin(ref) {
-    this.origin = ref
-    // this.destination = this.state.origin
-  }
-
-
   onSubmitHandler() { //REQUEST API
 
-    this.getLocation(this.state.origin)
-      .then(() => this.getWaypoints(this.state.originLatLng, this.state.radius))
+    this.setState({ mapDrawn: false })
+
+    this.getLocation(this.state.origin)                  //posible problema
+      .then(() => {
+
+        this.getWaypoints(this.state.originLatLng, this.state.radius)
+      })
       .then(response => {
-        console.log(this.state, "response finla pero final de verdad")
+        console.log(response)
+        console.log(this.state, "response final pero final de verdad")
       })
       .catch((err) => console.log("getWaypoints da error:", err))
   }
@@ -98,17 +101,12 @@ class MainMap extends Component {
                 <div className='form-group'>
                   <label htmlFor='ORIGIN'>Address</label>
                   <br />
-                  <input id='ORIGIN' name="origin" className='form-control' type='text' onChange={(e) => this.onHandleChange(e)} ref={this.getOrigin} />
+                  <input id='ORIGIN' name="origin" className='form-control' type='text' onChange={(e) => this.onHandleChange(e)}
+                  // ref={this.getOrigin} 
+                  />
                 </div>
               </div>
 
-              {/* <div className='col-md-6 col-lg-4'>
-                <div className='form-group'>
-                  <label htmlFor='DESTINATION'>Destination</label>
-                  <br />
-                  <input id='DESTINATION' name="destination" className='form-control' onChange={(e) => this.onHandleChange(e)} type='text' ref={this.getDestination} />
-                </div>
-              </div> */}
             </div>
 
 
@@ -120,12 +118,11 @@ class MainMap extends Component {
                   className='custom-control-input'
                   name='radius'
                   type='radio'
-                  value={500}
+                  value={700}
                   onChange={(e) => this.checkRadius(e)} ///handlechange?
                 />
                 <label className='custom-control-label' htmlFor='LESSTHANANHOUR'>Have a quick walk</label>
               </div>
-
               <div className='form-group custom-control custom-radio mr-4'>
                 <input
                   id='MORETHANANHOUR'
@@ -149,22 +146,24 @@ class MainMap extends Component {
           <GoogleMap
             id='example-map'
             mapContainerStyle={{
-              height: "400px",
-              width: "800px",
-
-
+              height: "600px",
+              width: "700px",
+              borderRadius: 100,
             }}
-            zoom={7}
+            zoom={2}
             center={{
-              lat: -3.745,
-              lng: -38.523
+              lat: 20,
+              lng: 110
             }}
-            options={{ styles: mapStyles }}    // esta es la buena
+            options={{
+              styles: this.state.currentMapStyle,
+              disableDefaultUI: true
+            }}    // esta es la buena
 
           >
             {
               (
-                this.state.origin !== ''
+                this.state.origin !== '' && !this.state.mapDrawn
               ) && (
                 <DirectionsService //REQUERIDO
                   options={{ //REQUERIDO
@@ -172,9 +171,6 @@ class MainMap extends Component {
                     destination: this.state.origin,
                     origin: this.state.origin,
                     travelMode: "WALKING",
-                    // radius: this.state.radius,
-                    // type: this.state.type,
-                    // keyword: "touristic"
                   }}
 
                   callback={this.directionsCallback}
@@ -196,10 +192,12 @@ class MainMap extends Component {
                     directions: this.state.response //REQUERIDO
                   }}
                   onLoad={directionsRenderer => {
+                    this.setState({ mapDrawn: true })
                     console.log('DirectionsRenderer onLoad directionsRenderer: ', directionsRenderer)
                   }}
                   onUnmount={directionsRenderer => {
                     console.log('DirectionsRenderer onUnmount directionsRenderer: ', directionsRenderer)
+
                   }}
                 />
               )
@@ -207,7 +205,23 @@ class MainMap extends Component {
 
           </GoogleMap>
         </LoadScript>
+        <Nav.Link>
+          <Link onClick={
+            () => this._service.saveMap(this.state)
+          } to="/experience-form">Share your experience!</Link>
+        </Nav.Link>
+        <form>
+          <DropdownButton
+            id="dropdown-basic-button"
+            title="Map Styles"
 
+          >
+            <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles1 })} id="1">estilo 1</Dropdown.Item>
+            <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles2 })} id="2">estilo 2</Dropdown.Item>
+            <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles3 })} id="3">estilo 3</Dropdown.Item>
+            <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles4 })} id="3">estilo 4</Dropdown.Item>
+          </DropdownButton>
+        </form>
       </>
 
     )

@@ -12,6 +12,7 @@ import Navbar from './components/ui/Navbar'
 import Index from './components/pages/Index'
 import Profile from './components/pages/Profile'
 import MainMap, { MyFancyComponent } from './components/pages/MainMap'
+import ExperienceForm from "./components/pages/ExperienceForm"
 
 
 // import Profile from './components/pages/Profile'
@@ -89,7 +90,9 @@ class App extends Component {
 
         <Switch>
 
-          <Route exact path="/" component={Index} />
+          <Route exact path="/" 
+            
+          component={Index} />
           <Route path="/signup" render={match => <Signup setUser={this.setTheUser} {...match} />} />
           <Route path="/login" render={match => <Login setUser={this.setTheUser} {...match} />} />
           <Route path="/profile" render={() =>
@@ -97,6 +100,9 @@ class App extends Component {
           } />
           <Route path="/map" render={() =>
             this.state.loggedInUser ? <MainMap /> : <Redirect to="/" />
+          } />
+          <Route path="/experience-form" render={() =>
+            this.state.loggedInUser ? <ExperienceForm /> : <Redirect to="/" />
           } />
 
         </Switch>
