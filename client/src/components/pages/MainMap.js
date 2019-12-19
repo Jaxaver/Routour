@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api'
 import MapServices from '../../service/MapServices.service'
-import { DropdownButton, Dropdown, Nav, Button, Form, Container } from 'react-bootstrap'
+import { Modal, DropdownButton, Dropdown, Nav, Button, Form, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-
 
 import mapStyles1 from "../../styles/mapStyles1"
 import mapStyles2 from "../../styles/mapStyles2"
@@ -29,9 +28,13 @@ class MainMap extends Component {
       keyword: "",
       waypoints: [],
       currentMapStyle: mapStyles1,
-      mapDrawn: false
+      mapDrawn: false,
+      loggedInUser: this.props.loggedInUser,
+      show: false,
+      description: ""
     }
 
+    this._mapService = new MapServices()
     this.directionsCallback = this.directionsCallback.bind(this)
     // this.getOrigin = this.getOrigin.bind(this)
     this.onMapClick = this.onMapClick.bind(this)
@@ -41,6 +44,17 @@ class MainMap extends Component {
     // this.checkMapStyle = this._service.checkMapStyle.bind(this)
 
   }
+
+
+
+  handleClose() {
+    this.setState({ show: false })
+  }
+  handleShow() {
+    this.setState({ show: true })
+  }
+
+
 
   directionsCallback(response) {
     console.log("directions callback", response)
@@ -87,6 +101,22 @@ class MainMap extends Component {
     console.log('onClick args: ', args)
   }
 
+  handleInputChange = e => {
+    let { name, value } = e.target
+    this.setState({
+      experience: { ...this.state.experience, [name]: value }
+    })
+  }
+
+  postNewExperience() {
+    this._mapService.saveMap(this.state)
+      .then(x => {
+        console.log("submitiando", x)
+        // this.props.closeModalWindow()
+        // this.props.updateCoastersList()
+      })
+      .catch(err => console.log(err))
+  }
 
   render() {
     return (
@@ -118,7 +148,7 @@ class MainMap extends Component {
                   className='custom-control-input'
                   name='radius'
                   type='radio'
-                  value={700}
+                  value={1000}
                   onChange={(e) => this.checkRadius(e)} ///handlechange?
                 />
                 <label className='custom-control-label' htmlFor='LESSTHANANHOUR'>Have a quick walk</label>
@@ -128,7 +158,7 @@ class MainMap extends Component {
                   id='MORETHANANHOUR'
                   className='custom-control-input'
                   name='radius'
-                  value={2000}
+                  value={2500}
                   type='radio'
                   onChange={(e) => this.checkRadius(e)}
                 />
@@ -144,7 +174,8 @@ class MainMap extends Component {
         <LoadScript id="script-loader"
           googleMapsApiKey="AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g">
           <GoogleMap
-            id='example-map'
+            loggedInUser={this.state.loggedInUser}
+            id='main-map'
             mapContainerStyle={{
               height: "600px",
               width: "700px",
@@ -159,7 +190,6 @@ class MainMap extends Component {
               styles: this.state.currentMapStyle,
               disableDefaultUI: true
             }}    // esta es la buena
-
           >
             {
               (
@@ -205,16 +235,47 @@ class MainMap extends Component {
 
           </GoogleMap>
         </LoadScript>
-        <Nav.Link>
-          <Link onClick={
-            () => this._service.saveMap(this.state)
-          } to="/experience-form">Share your experience!</Link>
-        </Nav.Link>
+
+
+        <Button variant="primary" onClick={() => this.handleShow()}>
+          Share your experience
+      </Button>
+
+        <Modal show={this.state.show} onHide={() => this.handleClose()}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {/* A METER EN MÓDULO APARTE  */}
+            <Form onSubmit={this.handleSubmit}>
+              <Form.Group>
+                <Form.Label>Descripción</Form.Label>
+                <Form.Control type="text" name="description" onChange={this.onHandleChange} value={this.state.description} />
+                {/* handleInputChange ESTÁ MAL */}
+              </Form.Group>
+              {/* <Button variant="dark" size="sm" type="submit" disabled={this.state.disabledButton}>Share!</Button> */}
+            </Form>
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" type="submit" onClick={() => {
+              this.postNewExperience()
+              this.handleClose()
+            }
+            }>
+              Save Changes
+          </Button>
+          </Modal.Footer>
+        </Modal>
+
+
+
+
+
         <form>
           <DropdownButton
             id="dropdown-basic-button"
             title="Map Styles"
-
           >
             <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles1 })} id="1">estilo 1</Dropdown.Item>
             <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles2 })} id="2">estilo 2</Dropdown.Item>

@@ -5,6 +5,7 @@ import mapStyles1 from "../styles/mapStyles1"
 import mapStyles2 from "../styles/mapStyles2"
 import mapStyles3 from "../styles/mapStyles3"
 import mapStyles4 from "../styles/mapStyles4"
+import ExperienceForm from '../components/pages/ExperienceForm';
 
 export default class MapServices {
 
@@ -55,6 +56,7 @@ export default class MapServices {
         })
             .then(res => {
                 console.log(res, "primer then")
+                console.log("primeros 3 results", res.data.results.slice(0, 3))
                 return res.data.results.slice(0, 3)
             })
             .then(res => res.map(elem => elem.name))
@@ -71,7 +73,12 @@ export default class MapServices {
     }
 
     saveMap(mapState) {
-        axios.post("http://localhost:3000/map/new", mapState)
+        const { response, origin, waypoints, loggedInUser } = mapState
         console.log("aquí, pasando info", mapState)
+        return axios.post("http://localhost:3000/map/new", { response, origin, waypoints, loggedInUser })
+    }
+
+    getMaps() {
+        return axios.get("http://localhost:3000/map/allMaps")
     }
 }

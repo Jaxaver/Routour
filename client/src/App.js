@@ -16,6 +16,7 @@ import ExperienceForm from "./components/pages/ExperienceForm"
 
 
 // import Profile from './components/pages/Profile'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 /* CUSTOM AUTH COMPONENTS */
@@ -90,16 +91,16 @@ class App extends Component {
 
         <Switch>
 
-          <Route exact path="/" 
-            
-          component={Index} />
+          <Route exact path="/"
+
+            component={Index} />
           <Route path="/signup" render={match => <Signup setUser={this.setTheUser} {...match} />} />
           <Route path="/login" render={match => <Login setUser={this.setTheUser} {...match} />} />
           <Route path="/profile" render={() =>
             this.state.loggedInUser ? <Profile loggedInUser={this.state.loggedInUser} /> : <Redirect to="/" />
           } />
           <Route path="/map" render={() =>
-            this.state.loggedInUser ? <MainMap /> : <Redirect to="/" />
+            this.state.loggedInUser ? <MainMap loggedInUser={this.state.loggedInUser} /> : <Redirect to="/" />
           } />
           <Route path="/experience-form" render={() =>
             this.state.loggedInUser ? <ExperienceForm /> : <Redirect to="/" />

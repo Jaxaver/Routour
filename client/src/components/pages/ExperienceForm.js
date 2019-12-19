@@ -6,6 +6,10 @@ import MapServices from '../../service/MapServices.service'
 // import FilesService from '../../service/Files.service'
 
 
+
+
+//EN DESUSO
+
 class ExperienceForm extends Component {
     constructor(props) {
         super(props)
@@ -16,8 +20,7 @@ class ExperienceForm extends Component {
             buttonText: 'Share experience',
             experience: {
                 user: "",
-                description: "",
-                imageUrl: ""
+                description: ""
             }
         }
     }
