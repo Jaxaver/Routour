@@ -26,12 +26,13 @@ class Index extends Component {
 
     render() {
         return (
+
             <Container
+                className="welcome"
                 style={{
                     // margin: 0,
                     padding: 0,
                     alignContent: "space-between",
-                    width: window.innerWidth,
 
 
                 }}
@@ -40,10 +41,13 @@ class Index extends Component {
                     (<Row>
                         {this.state.experiences.map(experience => experience.user == this.props.loggedInUser && <CardMap key={experience.user} {...experience} />)}
                     </Row>)}
-                <section>
-                    <h1>Lost in another city?</h1>
-                    <h2>Time for a walk!</h2>
-                </section>
+                <div className="welcometext">
+                    <section>
+                        <h1>Lost in another city?</h1>
+                        <br></br> <br></br>
+                        <h2>There's always time for a walk!</h2>
+                    </section>
+                </div>
             </Container>
         )
     }

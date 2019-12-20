@@ -73,9 +73,9 @@ export default class MapServices {
     }
 
     saveMap(mapState) {
-        const { response, origin, waypoints, loggedInUser } = mapState
+        const { response, origin, waypoints, loggedInUser, description } = mapState
         console.log("aquí, pasando info", mapState)
-        return axios.post("http://localhost:3000/map/new", { response, origin, waypoints, loggedInUser })
+        return axios.post("http://localhost:3000/map/new", { response, origin, waypoints, loggedInUser, description })
     }
 
     getMaps() {

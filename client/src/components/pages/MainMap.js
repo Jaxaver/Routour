@@ -9,6 +9,8 @@ import mapStyles2 from "../../styles/mapStyles2"
 import mapStyles3 from "../../styles/mapStyles3"
 import mapStyles4 from "../../styles/mapStyles4"
 
+import "../../styles/styles.css"
+
 // const ScriptLoaded = require("../../docs/ScriptLoaded").default;
 
 
@@ -120,67 +122,72 @@ class MainMap extends Component {
 
   render() {
     return (
-      <>
+      <div className="background">
         <form>
           <div className='map-settings'>
             <hr className='mt-0 mb-3' />
 
-            <div className='row'>
+            <div className='row searcher'>
+              <div>
+                <div className='col-md-6 col-lg-4 searchbar'>
+                  <div className='form-group'>
+                    <label htmlFor='ORIGIN'></label>
+                    <br />
+                    <input id='ORIGIN' name="origin" className='form-control' type='text' onChange={(e) => this.onHandleChange(e)}
+                    // ref={this.getOrigin} 
+                    />
+                  </div>
+                </div>
 
-              <div className='col-md-6 col-lg-4'>
-                <div className='form-group'>
-                  <label htmlFor='ORIGIN'>Address</label>
-                  <br />
-                  <input id='ORIGIN' name="origin" className='form-control' type='text' onChange={(e) => this.onHandleChange(e)}
-                  // ref={this.getOrigin} 
+              </div>
+
+
+              {/* RADIUS FORMULARY */}
+              <div className='d-flex flex-wrap'>
+                <div className='form-group custom-control custom-radio mr-4'>
+                  <input
+                    id='LESSTHANANHOUR'
+                    className='custom-control-input'
+                    name='radius'
+                    type='radio'
+                    value={1000}
+                    onChange={(e) => this.checkRadius(e)} ///handlechange?
                   />
+                  <label className='custom-control-label' htmlFor='LESSTHANANHOUR'>Have a quick walk</label>
+                </div>
+                <div className='form-group custom-control custom-radio mr-4'>
+                  <input
+                    id='MORETHANANHOUR'
+                    className='custom-control-input'
+                    name='radius'
+                    value={2500}
+                    type='radio'
+                    onChange={(e) => this.checkRadius(e)}
+                  />
+                  <label className='custom-control-label' htmlFor='MORETHANANHOUR'>I'm in no rush</label>
                 </div>
               </div>
-
             </div>
 
 
-            {/* RADIUS FORMULARY */}
-            <div className='d-flex flex-wrap'>
-              <div className='form-group custom-control custom-radio mr-4'>
-                <input
-                  id='LESSTHANANHOUR'
-                  className='custom-control-input'
-                  name='radius'
-                  type='radio'
-                  value={1000}
-                  onChange={(e) => this.checkRadius(e)} ///handlechange?
-                />
-                <label className='custom-control-label' htmlFor='LESSTHANANHOUR'>Have a quick walk</label>
-              </div>
-              <div className='form-group custom-control custom-radio mr-4'>
-                <input
-                  id='MORETHANANHOUR'
-                  className='custom-control-input'
-                  name='radius'
-                  value={2500}
-                  type='radio'
-                  onChange={(e) => this.checkRadius(e)}
-                />
-                <label className='custom-control-label' htmlFor='MORETHANANHOUR'>I'm in no rush</label>
-              </div>
-            </div>
-            <button onClick={() => this.onSubmitHandler()} className='btn btn-primary' type='button' >
+            <button className="recommend-button" onClick={() => this.onSubmitHandler()} className='btn btn-primary' type='button' >
               Recommend Route
-          </button>
+            </button>
           </div>
         </form>
-
+        <div className="map-and-share">
+        <div className="map-container">
         <LoadScript id="script-loader"
           googleMapsApiKey="AIzaSyCT9kMK6-ApyLtqRv5jMj2AE-0WOm7fW8g">
           <GoogleMap
             loggedInUser={this.state.loggedInUser}
             id='main-map'
             mapContainerStyle={{
-              height: "600px",
-              width: "700px",
-              borderRadius: 100,
+              height: "35vw",
+              width: "65vw",
+              borderRadius: 50,
             }}
+            className= "mapa"
             zoom={2}
             center={{
               lat: 20,
@@ -235,7 +242,9 @@ class MainMap extends Component {
 
           </GoogleMap>
         </LoadScript>
-
+        </div>
+        
+            <div className="map-buttons">
 
         <Button variant="primary" onClick={() => this.handleShow()}>
           Share your experience
@@ -267,6 +276,7 @@ class MainMap extends Component {
           </Button>
           </Modal.Footer>
         </Modal>
+        
 
 
 
@@ -283,7 +293,9 @@ class MainMap extends Component {
             <Dropdown.Item onClick={() => this.setState({ currentMapStyle: mapStyles4 })} id="3">estilo 4</Dropdown.Item>
           </DropdownButton>
         </form>
-      </>
+        </div>
+        </div>
+      </div>
 
     )
   }

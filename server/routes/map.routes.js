@@ -12,8 +12,8 @@ router.get('/allMaps', (req, res) => {
 
 
 router.post('/new', (req, res) => {
-    const { response, origin, waypoints, loggedInUser } = req.body
-    console.log(response, origin, waypoints)
+    const { response, origin, waypoints, loggedInUser, description } = req.body
+    console.log(req.body)
     Experience.create(
         {
             user: loggedInUser.username,

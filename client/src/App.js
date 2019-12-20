@@ -27,6 +27,9 @@ import { Container, Row, Button, Modal } from "react-bootstrap"
 import Signup from './components/auth/Signup'
 import Login from './components/auth/Login'
 
+import "./styles/styles.css"
+
+
 
 
 

@@ -28,16 +28,16 @@ class Index extends Component {
 
     render() {
         return (
+            <>
+            <div className="jajaja"></div>
             <Container>
+                
                 {this.state.experiences !== null && 
-                (<Row>
+                (<Row className="my-maps-container">
                     {this.state.experiences.map(experience => <CardMap key={experience.user} {...experience}/> )}
                 </Row>)}
-                <section>
-                    <h1>Lost in another city?</h1>
-                    <h2>Time for a walk!</h2>
-                </section>
             </Container>
+            </>
         )
     }
 }
